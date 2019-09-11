@@ -57,11 +57,12 @@ exports.handler = async (req, res) => {
     if (proxyServer) {
         options.agent = new HttpsProxyAgent(proxyServer);
     }
-    
-    const parts = req.url.split('?');
-    if (parts > 1) {
-        var queryString = parts[1];
-        options.target = options.target + '?' + queryString;
+    var queryList = [];
+    Object.keys(req.query).forEach(function(key) {
+        queryList.push(key + '=' + req.query[key]);
+    });
+    if (queryList.length) {
+        options.target = options.target + '?' + queryList.join('&');
     }
 
     try {
