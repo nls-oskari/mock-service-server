@@ -2,7 +2,12 @@
 const util = require('../util');
 const proxy = require('http-proxy');
 const HttpStatus = require('http-status-codes');
+const HttpsProxyAgent = require('https-proxy-agent');
 const fs = require('fs');
+
+// corporate proxy to connect to via environment variables
+var proxyServer = process.env.HTTPS_PROXY ||
+                  process.env.HTTP_PROXY;
 
 const server = proxy.createProxyServer({
     ignorePath: true,
@@ -44,6 +49,9 @@ exports.handler = async (req, res) => {
     await util.sleep(delayMs);
     const options = req.secure ? getSecureOptions() : proxyOptions;
     options.target = process.env.PROXY_URL || url;
+    if (proxyServer) {
+        options.agent = new HttpsProxyAgent(proxyServer);
+    }
 
     try {
         server.web(req, res, options, errorHandlerFactory(res));
