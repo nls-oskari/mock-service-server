@@ -43,7 +43,7 @@ exports.handler = async (req, res) => {
     let { '0': delayMs, '1': url } = req.params;
     await util.sleep(delayMs);
     const options = req.secure ? getSecureOptions() : proxyOptions;
-    options.target = url;
+    options.target = process.env.PROXY_URL || url;
 
     try {
         server.web(req, res, options, errorHandlerFactory(res));
