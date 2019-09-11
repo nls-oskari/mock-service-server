@@ -45,12 +45,23 @@ function handleProxyError(res, e) {
 const errorHandlerFactory = res => e => handleProxyError(res, e);
 
 exports.handler = async (req, res) => {
+    const baseUrl = process.env.PROXY_URL;
+    if (!baseUrl) {
+        res.status(500);
+        return;
+    }
     let { '0': delayMs, '1': url } = req.params;
     await util.sleep(delayMs);
     const options = req.secure ? getSecureOptions() : proxyOptions;
-    options.target = process.env.PROXY_URL || url;
+    options.target = baseUrl + url;
     if (proxyServer) {
         options.agent = new HttpsProxyAgent(proxyServer);
+    }
+    
+    const parts = req.url.split('?');
+    if (parts > 1) {
+        var queryString = parts[1];
+        options.target = options.target + '?' + queryString;
     }
 
     try {
