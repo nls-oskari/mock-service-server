@@ -31,4 +31,4 @@ The server offers following end points:
 
 Start by running `node server.js`
 
-If you are using this behind corporate proxy use HTTP_PROXY and HTTPS_PROXY env variables to configure it.
+If you are using this behind corporate proxy use `HTTP_PROXY` and `HTTPS_PROXY` env variables to configure it.
